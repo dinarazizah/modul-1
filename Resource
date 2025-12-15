@@ -1,0 +1,87 @@
+import 'package:flutter/material.dart';
+
+void main() {
+  runApp(const MyApp());
+}
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      title: 'Layout Flutter',
+      theme: ThemeData(primarySwatch: Colors.red),
+      home: const DashboardPage(),
+    );
+  }
+}
+
+class DashboardPage extends StatelessWidget {
+  const DashboardPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Dashboard'),
+      ),
+      drawer: Drawer(
+        child: ListView(
+          padding: EdgeInsets.zero,
+          children: const [
+            DrawerHeader(
+              decoration: BoxDecoration(color: Colors.red),
+              child: Text('Menu', style: TextStyle(color: Colors.white, fontSize: 20)),
+            ),
+            ListTile(leading: Icon(Icons.dashboard), title: Text('Dashboard')),
+            ListTile(leading: Icon(Icons.calculate), title: Text('Bangun Ruang')),
+            ListTile(leading: Icon(Icons.bar_chart), title: Text('Laporan')),
+            ListTile(leading: Icon(Icons.logout), title: Text('Logout')),
+          ],
+        ),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(16),
+        child: GridView.count(
+          crossAxisCount: 2,
+          crossAxisSpacing: 16,
+          mainAxisSpacing: 16,
+          children: const [
+            DashboardCard(title: 'Kubus', icon: Icons.crop_square),
+            DashboardCard(title: 'Balok', icon: Icons.view_in_ar),
+            DashboardCard(title: 'Tabung', icon: Icons.circle),
+            DashboardCard(title: 'Kerucut', icon: Icons.change_history),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class DashboardCard extends StatelessWidget {
+  final String title;
+  final IconData icon;
+
+  const DashboardCard({super.key, required this.title, required this.icon});
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      elevation: 4,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      child: InkWell(
+        onTap: () {},
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(icon, size: 48, color: Colors.red),
+            const SizedBox(height: 12),
+            Text(title, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+          ],
+        ),
+      ),
+    );
+  }
+}
