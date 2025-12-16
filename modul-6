@@ -1,0 +1,330 @@
+import 'package:flutter/material.dart';
+
+void main() {
+  runApp(const BangunRuangApp());
+}
+
+class BangunRuangApp extends StatelessWidget {
+  const BangunRuangApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      title: 'Bangun Ruang',
+      theme: ThemeData(
+        scaffoldBackgroundColor: const Color(0xFFF2F9FF),
+        fontFamily: 'Roboto',
+      ),
+      home: const MainPage(),
+    );
+  }
+}
+
+/* =========================
+   MAIN PAGE (FRAGMENT HOST)
+   ========================= */
+class MainPage extends StatefulWidget {
+  const MainPage({super.key});
+
+  @override
+  State<MainPage> createState() => _MainPageState();
+}
+
+class _MainPageState extends State<MainPage> {
+  int activeFragment = 0;
+
+  void changeFragment(int index) {
+    setState(() {
+      activeFragment = index;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        elevation: 0,
+        flexibleSpace: Container(
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              colors: [Color(0xFF00B4DB), Color(0xFF0083B0)],
+            ),
+          ),
+        ),
+        title: const Text('Pembelajaran Bangun Ruang'),
+        centerTitle: true,
+      ),
+      body: IndexedStack(
+        index: activeFragment,
+        children: [
+          HomeFragment(onSelect: changeFragment),
+          const KubusFragment(),
+          const BalokFragment(),
+          const TabungFragment(),
+        ],
+      ),
+    );
+  }
+}
+
+/* =========================
+   HOME FRAGMENT
+   ========================= */
+class HomeFragment extends StatelessWidget {
+  final Function(int) onSelect;
+  const HomeFragment({super.key, required this.onSelect});
+
+  @override
+  Widget build(BuildContext context) {
+    return ListView(
+      padding: const EdgeInsets.all(16),
+      children: [
+        Container(
+          padding: const EdgeInsets.all(20),
+          decoration: BoxDecoration(
+            gradient: const LinearGradient(
+              colors: [Color(0xFF43CEA2), Color(0xFF185A9D)],
+            ),
+            borderRadius: BorderRadius.circular(20),
+          ),
+          child: const Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text('Selamat Datang 👋',
+                  style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold)),
+              SizedBox(height: 8),
+              Text(
+                'Pilih bangun ruang untuk menghitung volume',
+                style: TextStyle(color: Colors.white),
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: 20),
+        menuCard(Icons.crop_square, 'Kubus', 'Volume = s × s × s', () => onSelect(1)),
+        menuCard(Icons.view_in_ar, 'Balok', 'Volume = p × l × t', () => onSelect(2)),
+        menuCard(Icons.circle_outlined, 'Tabung', 'Volume = π × r² × t', () => onSelect(3)),
+      ],
+    );
+  }
+
+  Widget menuCard(
+      IconData icon, String title, String subtitle, VoidCallback onTap) {
+    return Card(
+      elevation: 6,
+      margin: const EdgeInsets.only(bottom: 16),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
+      child: ListTile(
+        contentPadding: const EdgeInsets.all(16),
+        leading: CircleAvatar(
+          radius: 28,
+          backgroundColor: Colors.lightBlue.shade100,
+          child: Icon(icon, size: 32, color: Colors.blue),
+        ),
+        title: Text(title,
+            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
+        subtitle: Text(subtitle),
+        trailing: const Icon(Icons.arrow_forward_ios),
+        onTap: onTap,
+      ),
+    );
+  }
+}
+
+/* =========================
+   KUBUS FRAGMENT
+   ========================= */
+class KubusFragment extends StatefulWidget {
+  const KubusFragment({super.key});
+
+  @override
+  State<KubusFragment> createState() => _KubusFragmentState();
+}
+
+class _KubusFragmentState extends State<KubusFragment> {
+  final sisi = TextEditingController();
+  double hasil = 0;
+
+  void hitung() {
+    setState(() {
+      double s = double.tryParse(sisi.text) ?? 0;
+      hasil = s * s * s;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return fragmentLayout(
+      title: 'Kubus',
+      icon: Icons.crop_square,
+      children: [
+        inputField(sisi, 'Sisi Kubus'),
+        gradientButton(hitung),
+        resultBox(hasil),
+      ],
+    );
+  }
+}
+
+/* =========================
+   BALOK FRAGMENT
+   ========================= */
+class BalokFragment extends StatefulWidget {
+  const BalokFragment({super.key});
+
+  @override
+  State<BalokFragment> createState() => _BalokFragmentState();
+}
+
+class _BalokFragmentState extends State<BalokFragment> {
+  final p = TextEditingController();
+  final l = TextEditingController();
+  final t = TextEditingController();
+  double hasil = 0;
+
+  void hitung() {
+    setState(() {
+      hasil =
+          (double.tryParse(p.text) ?? 0) *
+          (double.tryParse(l.text) ?? 0) *
+          (double.tryParse(t.text) ?? 0);
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return fragmentLayout(
+      title: 'Balok',
+      icon: Icons.view_in_ar,
+      children: [
+        inputField(p, 'Panjang'),
+        inputField(l, 'Lebar'),
+        inputField(t, 'Tinggi'),
+        gradientButton(hitung),
+        resultBox(hasil),
+      ],
+    );
+  }
+}
+
+/* =========================
+   TABUNG FRAGMENT
+   ========================= */
+class TabungFragment extends StatefulWidget {
+  const TabungFragment({super.key});
+
+  @override
+  State<TabungFragment> createState() => _TabungFragmentState();
+}
+
+class _TabungFragmentState extends State<TabungFragment> {
+  final r = TextEditingController();
+  final t = TextEditingController();
+  double hasil = 0;
+
+  void hitung() {
+    setState(() {
+      hasil = 3.14 *
+          (double.tryParse(r.text) ?? 0) *
+          (double.tryParse(r.text) ?? 0) *
+          (double.tryParse(t.text) ?? 0);
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return fragmentLayout(
+      title: 'Tabung',
+      icon: Icons.circle_outlined,
+      children: [
+        inputField(r, 'Jari-jari'),
+        inputField(t, 'Tinggi'),
+        gradientButton(hitung),
+        resultBox(hasil),
+      ],
+    );
+  }
+}
+
+/* =========================
+   UI COMPONENT
+   ========================= */
+Widget fragmentLayout({
+  required String title,
+  required IconData icon,
+  required List<Widget> children,
+}) {
+  return ListView(
+    padding: const EdgeInsets.all(20),
+    children: [
+      Row(
+        children: [
+          Icon(icon, size: 32, color: Colors.blue),
+          const SizedBox(width: 10),
+          Text(title,
+              style:
+                  const TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
+        ],
+      ),
+      const SizedBox(height: 20),
+      ...children,
+    ],
+  );
+}
+
+Widget inputField(TextEditingController c, String label) {
+  return Padding(
+    padding: const EdgeInsets.only(bottom: 14),
+    child: TextField(
+      controller: c,
+      keyboardType: TextInputType.number,
+      decoration: InputDecoration(
+        labelText: label,
+        prefixIcon: const Icon(Icons.edit),
+        filled: true,
+        fillColor: Colors.white,
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(14)),
+      ),
+    ),
+  );
+}
+
+Widget gradientButton(VoidCallback onTap) {
+  return Container(
+    width: double.infinity,
+    decoration: BoxDecoration(
+      gradient:
+          const LinearGradient(colors: [Color(0xFF00B4DB), Color(0xFF0083B0)]),
+      borderRadius: BorderRadius.circular(14),
+    ),
+    child: ElevatedButton(
+      onPressed: onTap,
+      style: ElevatedButton.styleFrom(
+        backgroundColor: Colors.transparent,
+        shadowColor: Colors.transparent,
+        padding: const EdgeInsets.all(14),
+      ),
+      child: const Text('Hitung Volume',
+          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+    ),
+  );
+}
+
+Widget resultBox(double value) {
+  return Container(
+    margin: const EdgeInsets.only(top: 20),
+    padding: const EdgeInsets.all(16),
+    decoration: BoxDecoration(
+      color: Colors.blue.shade50,
+      borderRadius: BorderRadius.circular(16),
+    ),
+    child: Text(
+      'Hasil Volume: $value',
+      style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+    ),
+  );
+}
