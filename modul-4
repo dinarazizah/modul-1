@@ -1,0 +1,293 @@
+import 'package:flutter/material.dart';
+
+void main() {
+  runApp(const BangunRuangApp());
+}
+
+class BangunRuangApp extends StatelessWidget {
+  const BangunRuangApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      title: 'Bangun Ruang',
+      theme: ThemeData(
+        primaryColor: Colors.lightBlue,
+        scaffoldBackgroundColor: Colors.white,
+      ),
+      home: const HomePage(),
+    );
+  }
+}
+
+/* =========================
+   ACTIVITY 1 : HOME PAGE
+   (STATELESS - STATIS)
+   ========================= */
+class HomePage extends StatelessWidget {
+  const HomePage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.lightBlue,
+        title: const Text('Pembelajaran Bangun Ruang'),
+      ),
+      body: ListView(
+        padding: const EdgeInsets.all(16),
+        children: [
+          const HeaderCard(),
+          const SizedBox(height: 16),
+
+          BangunRuangTile(
+            icon: Icons.crop_square,
+            title: 'Kubus',
+            subtitle: 'Hitung volume kubus',
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const HitungKubusPage()),
+              );
+            },
+          ),
+
+          BangunRuangTile(
+            icon: Icons.view_in_ar,
+            title: 'Balok',
+            subtitle: 'Hitung volume balok',
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const HitungBalokPage()),
+              );
+            },
+          ),
+
+          BangunRuangTile(
+            icon: Icons.circle_outlined,
+            title: 'Tabung',
+            subtitle: 'Hitung volume tabung',
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const HitungTabungPage()),
+              );
+            },
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class HeaderCard extends StatelessWidget {
+  const HeaderCard({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      color: Colors.lightBlue.shade50,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      child: const Padding(
+        padding: EdgeInsets.all(20),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('Selamat Datang',
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+            SizedBox(height: 8),
+            Text('Pilih bangun ruang untuk melakukan perhitungan'),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class BangunRuangTile extends StatelessWidget {
+  final IconData icon;
+  final String title;
+  final String subtitle;
+  final VoidCallback onTap;
+
+  const BangunRuangTile({
+    super.key,
+    required this.icon,
+    required this.title,
+    required this.subtitle,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      margin: const EdgeInsets.only(bottom: 12),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      child: ListTile(
+        leading: Icon(icon, size: 36, color: Colors.lightBlue),
+        title: Text(title, style: const TextStyle(fontWeight: FontWeight.bold)),
+        subtitle: Text(subtitle),
+        trailing: const Icon(Icons.arrow_forward_ios, size: 16),
+        onTap: onTap,
+      ),
+    );
+  }
+}
+
+/* =========================
+   ACTIVITY 2 : KUBUS
+   (STATEFUL - 1 INPUT)
+   ========================= */
+class HitungKubusPage extends StatefulWidget {
+  const HitungKubusPage({super.key});
+
+  @override
+  State<HitungKubusPage> createState() => _HitungKubusPageState();
+}
+
+class _HitungKubusPageState extends State<HitungKubusPage> {
+  final sisiCtrl = TextEditingController();
+  double volume = 0;
+
+  void hitung() {
+    setState(() {
+      double s = double.tryParse(sisiCtrl.text) ?? 0;
+      volume = s * s * s;
+    });
+  }
+
+  @override
+  void dispose() {
+    sisiCtrl.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(backgroundColor: Colors.lightBlue, title: const Text('Kubus')),
+      body: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          children: [
+            TextField(controller: sisiCtrl, decoration: const InputDecoration(labelText: 'Sisi')),
+            const SizedBox(height: 16),
+            ElevatedButton(onPressed: hitung, child: const Text('Hitung')),
+            const SizedBox(height: 16),
+            Text('Volume: $volume', style: const TextStyle(fontSize: 18)),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+/* =========================
+   ACTIVITY 3 : BALOK
+   (STATEFUL - 3 INPUT)
+   ========================= */
+class HitungBalokPage extends StatefulWidget {
+  const HitungBalokPage({super.key});
+
+  @override
+  State<HitungBalokPage> createState() => _HitungBalokPageState();
+}
+
+class _HitungBalokPageState extends State<HitungBalokPage> {
+  final pCtrl = TextEditingController();
+  final lCtrl = TextEditingController();
+  final tCtrl = TextEditingController();
+  double volume = 0;
+
+  void hitung() {
+    setState(() {
+      volume =
+          (double.tryParse(pCtrl.text) ?? 0) *
+          (double.tryParse(lCtrl.text) ?? 0) *
+          (double.tryParse(tCtrl.text) ?? 0);
+    });
+  }
+
+  @override
+  void dispose() {
+    pCtrl.dispose();
+    lCtrl.dispose();
+    tCtrl.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(backgroundColor: Colors.lightBlue, title: const Text('Balok')),
+      body: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          children: [
+            TextField(controller: pCtrl, decoration: const InputDecoration(labelText: 'Panjang')),
+            TextField(controller: lCtrl, decoration: const InputDecoration(labelText: 'Lebar')),
+            TextField(controller: tCtrl, decoration: const InputDecoration(labelText: 'Tinggi')),
+            const SizedBox(height: 16),
+            ElevatedButton(onPressed: hitung, child: const Text('Hitung')),
+            const SizedBox(height: 16),
+            Text('Volume: $volume', style: const TextStyle(fontSize: 18)),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+/* =========================
+   ACTIVITY 4 : TABUNG
+   (STATEFUL - RUMUS π)
+   ========================= */
+class HitungTabungPage extends StatefulWidget {
+  const HitungTabungPage({super.key});
+
+  @override
+  State<HitungTabungPage> createState() => _HitungTabungPageState();
+}
+
+class _HitungTabungPageState extends State<HitungTabungPage> {
+  final rCtrl = TextEditingController();
+  final tCtrl = TextEditingController();
+  double volume = 0;
+
+  void hitung() {
+    setState(() {
+      double r = double.tryParse(rCtrl.text) ?? 0;
+      double t = double.tryParse(tCtrl.text) ?? 0;
+      volume = 3.14 * r * r * t;
+    });
+  }
+
+  @override
+  void dispose() {
+    rCtrl.dispose();
+    tCtrl.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(backgroundColor: Colors.lightBlue, title: const Text('Tabung')),
+      body: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          children: [
+            TextField(controller: rCtrl, decoration: const InputDecoration(labelText: 'Jari-jari')),
+            TextField(controller: tCtrl, decoration: const InputDecoration(labelText: 'Tinggi')),
+            const SizedBox(height: 16),
+            ElevatedButton(onPressed: hitung, child: const Text('Hitung')),
+            const SizedBox(height: 16),
+            Text('Volume: $volume', style: const TextStyle(fontSize: 18)),
+          ],
+        ),
+      ),
+    );
+  }
+}
